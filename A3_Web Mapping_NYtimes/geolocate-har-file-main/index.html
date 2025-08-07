@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HAR GeoJSON Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100vh;
+      width: 100vw;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Load your GeoJSON -->
+  <script>
+    // Create map
+    const map = L.map('map').setView([20, 0], 2); // Start zoomed out
+
+    // Add basemap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Create custom icon
+    const customIcon = L.icon({
+      iconUrl: 'inputs/Icon Image.png', // Path to your custom icon
+      iconSize: [32, 32], // Size of the icon [width, height] - adjust based on your image
+      iconAnchor: [16, 32], // Point of the icon which corresponds to marker's location
+      popupAnchor: [0, -32] // Point from which the popup should open relative to the iconAnchor
+    });
+
+    // Load GeoJSON
+     fetch('outputs/ip_locations.geojson') // ← Your file path
+    .then(response => response.json())
+    .then(data => {
+      L.geoJSON(data, {
+        pointToLayer: function (feature, latlng) {
+          return L.marker(latlng, {icon: customIcon});
+        }
+      }).addTo(map);
+    });
+  </script>
+
+</body>
+</html>
